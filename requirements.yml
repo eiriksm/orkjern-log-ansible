@@ -1,0 +1,4 @@
+- src: kamaln7.swapfile
+- src: geerlingguy.git
+- src: geerlingguy.nginx
+- src: geerlingguy.docker

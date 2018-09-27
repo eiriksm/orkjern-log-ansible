@@ -1,0 +1,53 @@
+---
+
+- hosts: all
+  vars_files:
+    - vars/main.yml
+    - vars/secrets.yml
+  roles:
+    - kamaln7.swapfile
+    - geerlingguy.git
+    - geerlingguy.docker
+    - geerlingguy.nginx
+
+  tasks:
+    - name: Copy default vhost
+      copy:
+        src: ./assets/default.conf
+        dest: /etc/nginx/sites-available/default.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Enable default vhost
+      file:
+        src=/etc/nginx/sites-available/default.conf
+        dest=/etc/nginx/sites-enabled/000-default.conf
+        owner=root
+        group=root
+        state=link
+
+    - name: Copy kibana vhost
+      copy:
+        src: ./assets/kibana.conf
+        dest: /etc/nginx/sites-available/kibana.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Enable default vhost
+      file:
+        src=/etc/nginx/sites-available/kibana.conf
+        dest=/etc/nginx/sites-enabled/001-kibana.conf
+        owner=root
+        group=root
+        state=link
+    - name: Allow logstash traffic
+      ufw: rule=allow port=5044 proto=tcp
+
+    - name: Add some users to the docker group
+      user:
+        name: "{{ item }}"
+        group: docker
+        append: yes
+      with_items: "{{ docker_users }}"
