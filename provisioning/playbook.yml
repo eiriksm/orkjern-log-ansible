@@ -35,13 +35,30 @@
         group: root
         mode: 0644
 
-    - name: Enable default vhost
+    - name: Enable kibana vhost
       file:
         src=/etc/nginx/sites-available/kibana.conf
         dest=/etc/nginx/sites-enabled/001-kibana.conf
         owner=root
         group=root
         state=link
+
+    - name: Copy gitlab vhost
+      copy:
+        src: ./assets/gitlab.conf
+        dest: /etc/nginx/sites-available/gitlab.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Enable gitlab vhost
+      file:
+        src=/etc/nginx/sites-available/gitlab.conf
+        dest=/etc/nginx/sites-enabled/002-gitlab.conf
+        owner=root
+        group=root
+        state=link
+
     - name: Allow logstash traffic
       ufw: rule=allow port=5044 proto=tcp
 
